@@ -4,9 +4,7 @@ The solvers read their pruning tables from this folder at startup. They are not 
 
 If a file is missing, the program still starts (the loaders do not check whether the file opened), but the solver will not produce correct solutions.
 
-## Kociemba (loaded on startup)
-
-Each file is a single line of characters. A distance is stored as `'a' + distance`. A symmetry index is stored as `'A' + symmetry` (0-15). A class index is stored as little-endian base 24, using `'a'` to `'x'` as the digits.
+All tables are loaded on startup. Each file is a single line of characters. A distance is stored as `'a' + distance`. A symmetry index is stored as `'A' + symmetry` (0-15). A class index is stored as little-endian base 24, using `'a'` to `'x'` as the digits.
 
 | File | Length | Contents |
 | --- | --- | --- |
@@ -16,11 +14,3 @@ Each file is a single line of characters. A distance is stored as `'a' + distanc
 | `KociembaG2Corner` | 40,320 chars | Phase 2 distance of the corner permutation alone |
 | `KociembaG2Edge` | 967,680 chars | Phase 2 distance, indexed by `edgeRPerm + edgeMPerm * 40320` |
 | `KociembaG2Cubie` | 111,605,760 chars | Phase 2 distance, indexed by `edgeRPermSym + classIndex * 40320` |
-
-## Thistlethwaite (only loaded if the Thistlewaite solver is enabled)
-
-`ThistlewaiteG1` to `ThistlewaiteG4` contain one `hash distance` pair per line. These files are still in the git history and can be restored with:
-
-```sh
-git show 23a7f43:resources/data/ThistlewaiteG1 > resources/data/ThistlewaiteG1
-```

@@ -14,7 +14,6 @@
 #include "cube/cubeScramble.h"
 #include "cube/moveStore.h"
 
-#include "solver/thistlewaite/thistlewaiteSolver.h"
 #include "solver/kociemba/kociembaSolver.h"
 
 #include "util/progressBar.h"
@@ -58,7 +57,6 @@ std::array<int, 13> moveKeys = { GLFW_KEY_U, GLFW_KEY_N, GLFW_KEY_R, GLFW_KEY_L,
                                 GLFW_KEY_Y, GLFW_KEY_T};
 
 CubeScrambler cubeScrambler((unsigned int)time(nullptr));
-ThistlewaiteSolver thistlewaiteSolver(false);
 KociembaSolver kociembaSolver;
 CubeIndexModel rubiksCubeIndexModel;
 

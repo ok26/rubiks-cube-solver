@@ -1,6 +1,6 @@
 # Rubik's Cube Solver
 
-A 3D Rubik's cube (OpenGL) that can be turned by hand and solved with Kociemba's two-phase algorithm. An older Thistlethwaite solver is also still in the code.
+A 3D Rubik's cube (OpenGL) that can be turned by hand and solved with Kociemba's two-phase algorithm.
 
 ## Building
 
@@ -56,9 +56,8 @@ src/
   main.cpp                window, render loop and keyboard handling
   cube/                   the logical cube: state, moves, scrambling
   graphics/               OpenGL rendering: shader, camera, 3D cube, animation
-  solver/                 search code shared by the solvers
+  solver/                 move pruning and solution simplification
     kociemba/             two-phase solver, coordinates, move and pruning tables
-    thistlewaite/         four-phase solver and its pattern databases
   util/                   small helpers (combinatorics, progress bar)
 external/                 third-party code kept in the repo (glad, stb_image)
 resources/                shaders, textures, vertex data and pruning tables

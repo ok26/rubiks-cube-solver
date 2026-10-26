@@ -61,9 +61,7 @@ add_executable(rubiks-cube-solver
     src/graphics/helper_functions.cpp
     src/graphics/shader.cpp
 
-    src/solver/cubeSolver.cpp
     src/solver/movePruner.cpp
-    src/solver/patternDatabase.cpp
     src/solver/simplifySolution.cpp
 
     src/solver/kociemba/g1DatabaseController.cpp
@@ -72,12 +70,6 @@ add_executable(rubiks-cube-solver
     src/solver/kociemba/moveController.cpp
     src/solver/kociemba/patternIndexer.cpp
     src/solver/kociemba/symmetryIndexer.cpp
-
-    src/solver/thistlewaite/pDatabaseG1.cpp
-    src/solver/thistlewaite/pDatabaseG2.cpp
-    src/solver/thistlewaite/pDatabaseG3.cpp
-    src/solver/thistlewaite/pDatabaseG4.cpp
-    src/solver/thistlewaite/thistlewaiteSolver.cpp
 
     src/util/math.cpp
     src/util/progressBar.cpp
