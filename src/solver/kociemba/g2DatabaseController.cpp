@@ -43,7 +43,7 @@ void G2DatabaseController::readCornerPermDatabase(string fileName) {
 	string data;
 	input >> data;
 	for (int i = 0; i < data.length(); i++)
-		cornerPermDatabase[i] = (int)(data[i] - 'a');
+		cornerPermDatabase[i] = (uint8_t)(data[i] - 'a');
 	input.close();
 	std::cout << "Finished reading from: " << fileName << "\n";
 }
@@ -53,7 +53,7 @@ void G2DatabaseController::readEdgePermDatabase(string fileName) {
 	string data;
 	input >> data;
 	for (int i = 0; i < data.length(); i++)
-		edgePermDatabase[i] = (int)(data[i] - 'a');
+		edgePermDatabase[i] = (uint8_t)(data[i] - 'a');
 	input.close();
 	std::cout << "Finished reading from: " << fileName << "\n";
 }
@@ -63,7 +63,7 @@ void G2DatabaseController::readCubiePermDatabase(string fileName) {
 	string data;
 	input >> data;
 	for (int i = 0; i < data.length(); i++)
-		cubiePermDatabase[i] = (int)(data[i] - 'a');
+		cubiePermDatabase[i] = (uint8_t)(data[i] - 'a');
 	input.close();
 	std::cout << "Finished reading from: " << fileName << "\n";
 }

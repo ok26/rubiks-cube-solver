@@ -47,7 +47,7 @@ void G1DatabaseController::readReducedData(string fileName) {
 	string data;
 	input >> data;
 	for (int i = 0; i < data.length(); i++)
-		reducedDatabase[i] = (int)(data[i] - 'a');
+		reducedDatabase[i] = (uint8_t)(data[i] - 'a');
 	input.close();
 	std::cout << "Finished reading from: " << fileName << "\n";
 }

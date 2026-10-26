@@ -5,12 +5,13 @@
 #include "solver/kociemba/symmetryIndexer.h"
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <utility>
 
 class G1DatabaseController {
 
-	std::array<int, 140908410>					reducedDatabase;
+	std::array<uint8_t, 140908410>				reducedDatabase;
 	std::array<std::pair<int, int>, 1013760>	symmetryDatabase;
 	std::array<std::array<int, 16>, 2187>		cornerSymmetryIndexEquivalence;
 

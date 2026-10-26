@@ -5,14 +5,15 @@
 #include "solver/kociemba/symmetryIndexer.h"
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <utility>
 
 class G2DatabaseController {
 
-	std::array<int, 40320>					cornerPermDatabase;
-	std::array<int, 967680>					edgePermDatabase;
-	std::array<int, 111605760>				cubiePermDatabase;
+	std::array<uint8_t, 40320>				cornerPermDatabase;
+	std::array<uint8_t, 967680>				edgePermDatabase;
+	std::array<uint8_t, 111605760>			cubiePermDatabase;
 	std::array<std::pair<int, int>, 40320>	cornerPermSymmetry;
 	std::array<std::array<int, 16>, 40320>	edgeRPermSymmetryEquivalence;
 
