@@ -1,0 +1,10 @@
+build/
+cmake-build-*/
+.vs/
+.vscode/
+.idea/
+.DS_Store
+
+# Pruning tables are generated locally and are too large for git
+resources/data/*
+!resources/data/README.md
