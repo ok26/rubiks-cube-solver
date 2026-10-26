@@ -22,15 +22,16 @@ void CubeScrambler::scrambleCube100(queue<Move> *moveQueue) {
 }
 
 void CubeScrambler::scrambleCube(CubeIndexModel& cube, int moves) {
-	int lastMove = -1;
+	int lastFace = -1;
 	for (int i = 0; i < moves; i++) {
 		int move = rand() % 18;
-		while ((move % 3) == (lastMove % 3)) move = rand() % 18;
+		while (move / 3 == lastFace) move = rand() % 18;
 		cube.doMove(move);
+		lastFace = move / 3;
 	}
 }
 
-void CubeScrambler::scrambleCubeWithRandomMoveNr(queue<Move>* moveQueue, int upperBound, int lowerBound, float animationDuration) {
+void CubeScrambler::scrambleCubeWithRandomMoveNr(queue<Move>* moveQueue, int lowerBound, int upperBound, float animationDuration) {
 	int moveNr = (rand() % (upperBound - lowerBound + 1)) + lowerBound;
 	for (int i = 0; i < moveNr; i++) {
 		Move move;

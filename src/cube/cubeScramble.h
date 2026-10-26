@@ -12,7 +12,7 @@ public:
 
 	void scrambleCube100(std::queue<Move> *moveQueue);
 	void scrambleCube(CubeIndexModel& cube, int moves);
-	void scrambleCubeWithRandomMoveNr(std::queue<Move>* moveQueue, int upperBound, int lowerBound, float animationDuration);
+	void scrambleCubeWithRandomMoveNr(std::queue<Move>* moveQueue, int lowerBound, int upperBound, float animationDuration);
 	int getAxis(int targetSide);
 };
 
