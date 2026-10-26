@@ -64,7 +64,6 @@ class KociembaSolver {
 	MoveController moveController;
 
 	int availableMovesG2 = 151524;
-	int bestSolutionFound = 1e9;
 
 public:
 	bool tablesInitialized = false;

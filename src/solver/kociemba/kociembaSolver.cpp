@@ -111,7 +111,7 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 	CubeStateG1 startingNode = getStateFromCube(cube);
 	int nextBound = databaseG1Controller.getNumMoves(startingNode.flipUDSlice, startingNode.cornerOri);
 
-	this->bestSolutionFound = solutionDepthblock;
+	int bestSolutionFound = solutionDepthblock;
 	bool solved = false;
 
 	if (nextBound == 0) {
@@ -155,9 +155,9 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 
 			int g2EstMoves = databaseG2Controller.getNumCornPermMoves(curNode.cube.cornerPerm);
 
-			if (curNode.depth + g2EstMoves + adds < this->bestSolutionFound) {
+			if (curNode.depth + g2EstMoves + adds < bestSolutionFound) {
 				CubeStateG2 stateG2 = getG2StateFromG1State(curNode.cube);
-				std::vector<int> solutionG2 = solveG2WithBlock(stateG2, this->bestSolutionFound - curNode.depth - adds);
+				std::vector<int> solutionG2 = solveG2WithBlock(stateG2, bestSolutionFound - curNode.depth - adds);
 
 				if (solutionG2.empty()) {
 					solution.clear();
@@ -169,7 +169,7 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 				}
 
 				if (curNode.depth + solutionG2.size() + adds -
-					solutionSimplifier.reductionDifference(curNode.move, solutionG2.front()) < this->bestSolutionFound) {
+					solutionSimplifier.reductionDifference(curNode.move, solutionG2.front()) < bestSolutionFound) {
 
 					solution.clear();
 					for (int i = 0; i < moves.size() && (int)moves.at(i) != 0xFF; i++)
@@ -177,10 +177,10 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 
 					solution.insert(solution.end(), solutionG2.begin(), solutionG2.end());
 					solutionSimplifier.simplifySolution(solution);
-					if ((int)solution.size() + adds < this->bestSolutionFound) {
-						this->bestSolutionFound = solution.size() + adds;
+					if ((int)solution.size() + adds < bestSolutionFound) {
+						bestSolutionFound = solution.size() + adds;
 						if (print)
-							cout << "Found solution with " << this->bestSolutionFound << " moves!\n";
+							cout << "Found solution with " << bestSolutionFound << " moves!\n";
 					}
 				}
 			}
