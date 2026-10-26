@@ -46,20 +46,12 @@ add_library(stb_image STATIC external/stb/stb_image.cpp)
 target_include_directories(stb_image PUBLIC external/stb)
 
 # ---------------------------------------------------------------------------
-# Application
+# Cube model and solver, shared by the application and the table generator
 # ---------------------------------------------------------------------------
-add_executable(rubiks-cube-solver
-    src/main.cpp
-
+add_library(solver-core STATIC
     src/cube/cubeIndexModel.cpp
     src/cube/cubeScramble.cpp
     src/cube/moveStore.cpp
-
-    src/graphics/animation.cpp
-    src/graphics/camera.cpp
-    src/graphics/cube.cpp
-    src/graphics/helper_functions.cpp
-    src/graphics/shader.cpp
 
     src/solver/movePruner.cpp
     src/solver/simplifySolution.cpp
@@ -74,16 +66,41 @@ add_executable(rubiks-cube-solver
     src/util/math.cpp
     src/util/progressBar.cpp
 )
+target_include_directories(solver-core PUBLIC src)
+target_link_libraries(solver-core PUBLIC Threads::Threads)
 
-target_include_directories(rubiks-cube-solver PRIVATE src)
+# ---------------------------------------------------------------------------
+# Application
+# ---------------------------------------------------------------------------
+add_executable(rubiks-cube-solver
+    src/main.cpp
+
+    src/graphics/animation.cpp
+    src/graphics/camera.cpp
+    src/graphics/cube.cpp
+    src/graphics/helper_functions.cpp
+    src/graphics/shader.cpp
+)
 target_compile_definitions(rubiks-cube-solver PRIVATE GLFW_INCLUDE_NONE)
-target_link_libraries(rubiks-cube-solver PRIVATE glad glfw glm::glm stb_image Threads::Threads)
+target_link_libraries(rubiks-cube-solver PRIVATE solver-core glad glfw glm::glm stb_image)
+
+# ---------------------------------------------------------------------------
+# Pruning table generator
+# ---------------------------------------------------------------------------
+add_executable(generate-tables
+    src/generator/generateTables.cpp
+    src/generator/kociembaTables.cpp
+    src/generator/pruningTable.cpp
+    src/generator/symmetryClasses.cpp
+    src/generator/tableVerifier.cpp
+)
+target_link_libraries(generate-tables PRIVATE solver-core)
 
 # Lets the compiler inline small functions across .cpp files (e.g. move table lookups in the search loop)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_ERROR LANGUAGES CXX)
 if(IPO_SUPPORTED)
-    set_property(TARGET rubiks-cube-solver PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+    set_property(TARGET solver-core rubiks-cube-solver generate-tables PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 endif()
 
 # The program loads resources/... relative to the working directory, so make

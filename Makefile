@@ -1,9 +1,9 @@
-# Thin wrapper around CMake so `make`, `make run` and `make clean` work from the project root
+# Thin wrapper around CMake so `make`, `make run`, `make tables` and `make clean` work from the project root
 
 BUILD_DIR  ?= build
 BUILD_TYPE ?= Release
 
-.PHONY: all build run clean
+.PHONY: all build run tables verify-tables clean
 
 all: build
 
@@ -15,6 +15,12 @@ build: $(BUILD_DIR)/CMakeCache.txt
 
 run: build
 	cd $(BUILD_DIR) && ./rubiks-cube-solver
+
+tables: build
+	cd $(BUILD_DIR) && ./generate-tables
+
+verify-tables: build
+	cd $(BUILD_DIR) && ./generate-tables verify
 
 clean:
 	rm -rf $(BUILD_DIR)

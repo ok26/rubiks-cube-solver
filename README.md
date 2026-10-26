@@ -30,7 +30,9 @@ cd build && ./rubiks-cube-solver
 ./build/rubiks-cube-solver
 ```
 
-`make run` builds and starts it. The solver also needs the pruning tables described in [`resources/data/README.md`](resources/data/README.md).
+`make run` builds and starts it.
+
+The solver also needs its pruning tables in `resources/data/`. The build creates a second program, `generate-tables`, that writes them: run `make tables` once, and `make verify-tables` to check them. See [`resources/data/README.md`](resources/data/README.md) for what the files contain.
 
 ## Controls
 
@@ -59,6 +61,7 @@ src/
   solver/                 move pruning and solution simplification
     kociemba/             two-phase solver, coordinates, move and pruning tables
   util/                   small helpers (combinatorics, progress bar)
+  generator/              the generate-tables program that writes the pruning tables
 external/                 third-party code kept in the repo (glad, stb_image)
 resources/                shaders, textures, vertex data and pruning tables
 ```
