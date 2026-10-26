@@ -64,10 +64,13 @@ std::vector<int> KociembaSolver::tripleSearch(CubeIndexModel cube1, int timeBloc
 	CubeIndexModel cube4 = cube1;
 	cube4.doMove(F);
 
-	auto ret1 = std::async(&KociembaSolver::kociembaTwoPhase, this, cube1, timeBlock, false, 1e9, 0);
-	auto ret2 = std::async(&KociembaSolver::kociembaTwoPhase, this, cube2, timeBlock, false, 1e9, 0);
-	auto ret3 = std::async(&KociembaSolver::kociembaTwoPhase, this, cube3, timeBlock, false, 1e9, 0);
-	auto ret4 = std::async(&KociembaSolver::kociembaTwoPhase, this, cube4, timeBlock, false, 1e9, 1);
+	// Shared by all four searches so each one can prune against the best solution any of them has found
+	std::atomic<int> bestSolutionFound(1e9);
+
+	auto ret1 = std::async(std::launch::async, &KociembaSolver::kociembaTwoPhase, this, cube1, timeBlock, std::ref(bestSolutionFound), false, 0);
+	auto ret2 = std::async(std::launch::async, &KociembaSolver::kociembaTwoPhase, this, cube2, timeBlock, std::ref(bestSolutionFound), false, 0);
+	auto ret3 = std::async(std::launch::async, &KociembaSolver::kociembaTwoPhase, this, cube3, timeBlock, std::ref(bestSolutionFound), false, 0);
+	auto ret4 = std::async(std::launch::async, &KociembaSolver::kociembaTwoPhase, this, cube4, timeBlock, std::ref(bestSolutionFound), false, 1);
 
 	std::vector<int> moves1 = ret1.get();
 	std::vector<int> moves2 = ret2.get();
@@ -95,7 +98,16 @@ std::vector<int> KociembaSolver::tripleSearch(CubeIndexModel cube1, int timeBloc
 	return moves;
 }
 
-std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeBlock, bool print, int solutionDepthblock, int adds) {
+// Lowers bestSolutionFound to length if that is shorter, even if other threads update it at the same time
+static bool updateBestSolution(std::atomic<int>& bestSolutionFound, int length) {
+	int best = bestSolutionFound;
+	while (length < best)
+		if (bestSolutionFound.compare_exchange_weak(best, length))
+			return true;
+	return false;
+}
+
+std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeBlock, std::atomic<int>& bestSolutionFound, bool print, int adds) {
 	typedef priority_queue<PrioritizedMoveG1, vector<PrioritizedMoveG1>, greater<PrioritizedMoveG1>> moveQueue_t;
 
 	SolutionSimplifier solutionSimplifier;
@@ -111,12 +123,12 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 	CubeStateG1 startingNode = getStateFromCube(cube);
 	int nextBound = databaseG1Controller.getNumMoves(startingNode.flipUDSlice, startingNode.cornerOri);
 
-	int bestSolutionFound = solutionDepthblock;
 	bool solved = false;
 
 	if (nextBound == 0) {
 		CubeStateG2 stateG2 = getG2StateFromG1State(startingNode);
 		solution = solveG2WithBlock(stateG2, 1e9);
+		updateBestSolution(bestSolutionFound, solution.size() + adds);
 		if (print)
 			std::cout << "Found solution with " << solution.size() << " moves!\n";
 		solved = true;
@@ -154,15 +166,17 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 				continue;
 
 			int g2EstMoves = databaseG2Controller.getNumCornPermMoves(curNode.cube.cornerPerm);
+			int best = bestSolutionFound;
 
-			if (curNode.depth + g2EstMoves + adds < bestSolutionFound) {
+			if (curNode.depth + g2EstMoves + adds < best) {
 				CubeStateG2 stateG2 = getG2StateFromG1State(curNode.cube);
-				std::vector<int> solutionG2 = solveG2WithBlock(stateG2, bestSolutionFound - curNode.depth - adds);
+				std::vector<int> solutionG2 = solveG2WithBlock(stateG2, best - curNode.depth - adds);
 
 				if (solutionG2.empty()) {
 					solution.clear();
 					for (int i = 0; i < moves.size() && (int)moves.at(i) != 0xFF; i++)
 						solution.push_back(moves.at(i));
+					updateBestSolution(bestSolutionFound, solution.size() + adds);
 					if (print)
 						cout << "Found optimal solution with " << solution.size() << " moves!\n";
 					break;
@@ -177,10 +191,9 @@ std::vector<int> KociembaSolver::kociembaTwoPhase(CubeIndexModel cube, int timeB
 
 					solution.insert(solution.end(), solutionG2.begin(), solutionG2.end());
 					solutionSimplifier.simplifySolution(solution);
-					if ((int)solution.size() + adds < bestSolutionFound) {
-						bestSolutionFound = solution.size() + adds;
+					if (updateBestSolution(bestSolutionFound, solution.size() + adds)) {
 						if (print)
-							cout << "Found solution with " << bestSolutionFound << " moves!\n";
+							cout << "Found solution with " << solution.size() + adds << " moves!\n";
 					}
 				}
 			}

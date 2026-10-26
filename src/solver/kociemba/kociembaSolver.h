@@ -8,6 +8,7 @@
 #include "solver/kociemba/g2DatabaseController.h"
 #include "solver/kociemba/patternIndexer.h"
 
+#include <atomic>
 #include <vector>
 
 struct CubeStateG1 {
@@ -74,7 +75,7 @@ public:
 	CubeStateG1 getStateFromCube(CubeIndexModel& cube);
 	CubeStateG2 getG2StateFromG1State(CubeStateG1& stateG1);
 	std::vector<int> tripleSearch(CubeIndexModel cube1, int timeBlock, bool print = true);
-	std::vector<int> kociembaTwoPhase(CubeIndexModel cube, int timeBlock, bool print = true, int solutionDepthblock = 1e9, int adds = 0);
+	std::vector<int> kociembaTwoPhase(CubeIndexModel cube, int timeBlock, std::atomic<int>& bestSolutionFound, bool print = true, int adds = 0);
 	std::vector<int> solveG2WithBlock(CubeStateG2& startingNode, int depthBlock);
 };
 
